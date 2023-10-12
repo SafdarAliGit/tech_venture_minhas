@@ -1,0 +1,7 @@
+.DS_Store
+*.pyc
+*.egg-info
+*.swp
+tags
+tech_venture_minhas/docs/current
+node_modules/

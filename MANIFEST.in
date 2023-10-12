@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include tech_venture_minhas *.css
+recursive-include tech_venture_minhas *.csv
+recursive-include tech_venture_minhas *.html
+recursive-include tech_venture_minhas *.ico
+recursive-include tech_venture_minhas *.js
+recursive-include tech_venture_minhas *.json
+recursive-include tech_venture_minhas *.md
+recursive-include tech_venture_minhas *.png
+recursive-include tech_venture_minhas *.py
+recursive-include tech_venture_minhas *.svg
+recursive-include tech_venture_minhas *.txt
+recursive-exclude tech_venture_minhas *.pyc
