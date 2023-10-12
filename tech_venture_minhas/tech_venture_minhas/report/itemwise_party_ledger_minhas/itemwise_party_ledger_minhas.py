@@ -508,7 +508,7 @@ def get_sales_invoice_items(result):
 				% (child_table_name, '%s', '%s'), (d.get('voucher_no'), table_name), as_dict=1)
 			for item in vouher_items:
 				row = frappe._dict({
-					'particular':  f"{item.item_name}",
+					'particular':  f"{item.item_name} : {item.description}",
 					'qty': item.qty,
 					'rate': item.rate,
 					'amount': item.amount
@@ -604,6 +604,13 @@ def get_columns(filters):
 			"fieldtype": "Float",
 			"width": 130,
 		},
+
+	{
+		"label": _("Remarks"),
+		"fieldname": "remarks",
+		"fieldtype": "Data",
+		"width": 130,
+	},
 		{"label": _("Voucher Type"), "fieldname": "voucher_type", "width": 120, "hidden": 1},
 		{
 			"label": _("Voucher No"),

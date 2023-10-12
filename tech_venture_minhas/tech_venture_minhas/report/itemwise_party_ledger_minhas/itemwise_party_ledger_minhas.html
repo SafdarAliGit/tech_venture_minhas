@@ -18,6 +18,7 @@
 			<th style="width: 15%">{%= __("Debit") %}</th>
 			<th style="width: 15%">{%= __("Credit") %}</th>
 			<th style="width: 15%">{%= __("Balance (Dr - Cr)") %}</th>
+			<th style="width: 15%">{%= __("Remarks") %}</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -35,6 +36,9 @@
 					{%= format_currency(data[i].credit, filters.presentation_currency) %}</td>
 				<td style="text-align: right">
 					{%= format_currency(data[i].balance, filters.presentation_currency) %}
+				</td>
+				<td style="text-align: right">
+					{%= data[i].remarks %}
 				</td>
 			{% } else { %}
 				<td></td>
