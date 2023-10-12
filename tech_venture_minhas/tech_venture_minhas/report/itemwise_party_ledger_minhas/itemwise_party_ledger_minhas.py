@@ -205,10 +205,10 @@ def get_gl_entries(filters, accounting_dimensions):
 		as_dict=1,
 	)
 
-	if filters.get("presentation_currency"):
-		return convert_to_presentation_currency(gl_entries, currency_map)
-	else:
-		return gl_entries
+	# if filters.get("presentation_currency"):
+	# 	return convert_to_presentation_currency(gl_entries, currency_map)
+	# else:
+	return gl_entries
 
 
 def get_conditions(filters):
