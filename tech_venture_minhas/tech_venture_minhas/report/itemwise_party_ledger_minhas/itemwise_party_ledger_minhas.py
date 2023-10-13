@@ -569,6 +569,12 @@ def get_columns(filters):
 			"width": 140,
 		},
 		{
+			"label": _("Remarks"),
+			"fieldname": "remarks",
+			"fieldtype": "Data",
+			"width": 130,
+		},
+		{
 			"label": _("Qty"),
 			"fieldname": "qty",
 			"fieldtype": "Float",
@@ -603,14 +609,9 @@ def get_columns(filters):
 			"fieldname": "balance",
 			"fieldtype": "Float",
 			"width": 130,
-		},
+		}
 
-	{
-		"label": _("Remarks"),
-		"fieldname": "remarks",
-		"fieldtype": "Data",
-		"width": 130,
-	},
+	,
 		{"label": _("Voucher Type"), "fieldname": "voucher_type", "width": 120, "hidden": 1},
 		{
 			"label": _("Voucher No"),
