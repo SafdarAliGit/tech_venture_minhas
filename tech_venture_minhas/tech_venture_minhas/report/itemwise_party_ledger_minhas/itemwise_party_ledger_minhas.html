@@ -1,3 +1,4 @@
+
 <h2 class="text-center">{%= __("Statement of Account for ")  %} {%= filters.party %} {%= __("(")  %}  {%= filters.party_type %} {%= __(")")  %}  </h2>
 
 <h5 class="text-center">
@@ -7,17 +8,17 @@
 </h5>
 
 <hr>
-<table class="table table-bordered">
+<table class="table table-bordered" style="font-size: 1.2em;">
 	<thead>
 		<tr>
 			<th style="width: 10%">{%= __("Date") %}</th>
-			<th style="width: 15%">{%= __("Ref#") %}</th>
-			<th style="width: 10%">{%= __("Qty") %}</th>
-			<th style="width: 10%">{%= __("Rate") %}</th>
-			<th style="width: 10%">{%= __("Amount") %}</th>
-			<th style="width: 15%">{%= __("Debit") %}</th>
-			<th style="width: 15%">{%= __("Credit") %}</th>
-			<th style="width: 15%">{%= __("Balance (Dr - Cr)") %}</th>
+			<th style="width: 29%">{%= __("Ref#") %}</th>
+			<th style="width: 5%">{%= __("Qty") %}</th>
+			<th style="width: 8%">{%= __("Rate") %}</th>
+			<th style="width: 8%">{%= __("Amount") %}</th>
+			<th style="width: 10%">{%= __("Debit") %}</th>
+			<th style="width: 10%">{%= __("Credit") %}</th>
+			<th style="width: 10%">{%= __("Balance (Dr - Cr)") %}</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -25,7 +26,7 @@
 			<tr>
 			{% if(data[i].posting_date || data[i].particular=='Opening') { %}
 				<td>{%= frappe.datetime.str_to_user(data[i].posting_date) %}</td>
-				<td>{%= data[i].particular %}<br>Remarks:{%= data[i].remarks  %}</td>
+				<td>{%= data[i].particular %}{% if data[i].remarks !='No Remarks'  %} <br>Remarks:{%= data[i].remarks  %} {% endif %}</td>
 				<td></td>
 				<td></td>
 				<td></td>

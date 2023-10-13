@@ -508,7 +508,7 @@ def get_sales_invoice_items(result):
 				% (child_table_name, '%s', '%s'), (d.get('voucher_no'), table_name), as_dict=1)
 			for item in vouher_items:
 				row = frappe._dict({
-					'particular':  f"{item.item_name} : {item.description}",
+					'particular':  f"{item.item_name}",
 					'qty': item.qty,
 					'rate': item.rate,
 					'amount': item.amount
