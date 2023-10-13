@@ -1,4 +1,10 @@
-
+<style>
+	table {
+		font-size: 1em;
+		border-collapse: collapse;
+		table-layout: auto;
+	}
+</style>
 <h2 class="text-center">{%= __("Statement of Account for ")  %} {%= filters.party %} {%= __("(")  %}  {%= filters.party_type %} {%= __(")")  %}  </h2>
 
 <h5 class="text-center">
@@ -8,7 +14,7 @@
 </h5>
 
 <hr>
-<table class="table table-bordered" style="font-size: 1.2em;">
+<table class="table table-bordered" >
 	<thead>
 		<tr>
 			<th style="width: 10%">{%= __("Date") %}</th>
