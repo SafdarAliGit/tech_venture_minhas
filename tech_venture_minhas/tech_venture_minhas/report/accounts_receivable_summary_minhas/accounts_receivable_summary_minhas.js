@@ -123,12 +123,12 @@ frappe.query_reports["Accounts Receivable Summary Minhas"] = {
 		// },
 	],
 
-	onload: function(report) {
-		report.page.add_inner_button(__("Accounts Receivable"), function() {
-			var filters = report.get_values();
-			frappe.set_route('query-report', 'Accounts Receivable', { company: filters.company });
-		});
-	}
+	// onload: function(report) {
+	// 	report.page.add_inner_button(__("Accounts Receivable"), function() {
+	// 		var filters = report.get_values();
+	// 		frappe.set_route('query-report', 'Accounts Receivable', { company: filters.company });
+	// 	});
+	// }
 }
 
 erpnext.utils.add_dimensions('Accounts Receivable Summary', 9);
