@@ -1,10 +1,12 @@
 <style>
-	table {
-		font-size: 1em;
-		border-collapse: collapse;
-		table-layout: auto;
+	.print-format {
+		padding: 4mm;
+		font-size: 12.0pt !important;
 	}
-</style>
+	.print-format td {
+		vertical-align:middle !important;
+	}
+	</style>
 <h2 class="text-center">{%= __("Statement of Account for ")  %} {%= filters.party %} {%= __("(")  %}  {%= filters.party_type %} {%= __(")")  %}  </h2>
 
 <h5 class="text-center">
