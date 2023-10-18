@@ -101,8 +101,10 @@ class AccountsReceivableSummary(ReceivablePayableReport):
 			# Add all amount columns
 			for k in list(self.party_total[d.party]):
 				if k not in ["currency", "sales_person"]:
-
-					self.party_total[d.party][k] += d.get(k, 0.0)
+					if self.party_total[d.party][k] is not None:
+						self.party_total[d.party][k] += d.get(k, 0.0)
+					else:
+						self.party_total[d.party][k] = d.get(k, 0.0)
 
 			# set territory, customer_group, sales person etc
 			self.set_party_details(d)
