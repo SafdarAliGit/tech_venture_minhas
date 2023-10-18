@@ -5,10 +5,41 @@
 import frappe
 from frappe import _, scrub
 from frappe.utils import cint, flt
+from frappe.query_builder.functions import Date, Sum
 
-from erpnext.accounts.party import get_partywise_advanced_payment_amount
 from erpnext.accounts.report.accounts_receivable.accounts_receivable import ReceivablePayableReport
+def get_partywise_advanced_payment_amount(
+	party_type, posting_date=None, future_payment=0, company=None, party=None, account_type=None
+):
+	gle = frappe.qb.DocType("GL Entry")
+	query = (
+		frappe.qb.from_(gle)
+		.select(gle.party)
+		.where(
+			(gle.party_type.isin(party_type)) & (gle.against_voucher.isnull()) & (gle.is_cancelled == 0)
+		)
+		.groupby(gle.party)
+	)
+	if account_type == "Receivable":
+		query = query.select(Sum(gle.credit).as_("amount"))
+	else:
+		query = query.select(Sum(gle.debit).as_("amount"))
 
+	if posting_date:
+		if future_payment:
+			query = query.where((gle.posting_date <= posting_date) | (Date(gle.creation) <= posting_date))
+		else:
+			query = query.where(gle.posting_date <= posting_date)
+
+	if company:
+		query = query.where(gle.company == company)
+
+	if party:
+		query = query.where(gle.party == party)
+
+	data = query.run(as_dict=True)
+	if data:
+		return frappe._dict(data)
 
 def execute(filters=None):
 	args = {
@@ -49,8 +80,8 @@ class AccountsReceivableSummary(ReceivablePayableReport):
 				self.filters.report_date,
 				self.filters.show_future_payments,
 				self.filters.company,
-				# party=party,
-				account_type="Receivable",
+				party=party,
+				account_type=self.account_type,
 			)
 			or {}
 		)
