@@ -34,7 +34,7 @@ import erpnext
 from erpnext import get_company_currency
 from erpnext.accounts.utils import get_fiscal_year
 from erpnext.exceptions import InvalidAccountCurrency, PartyDisabled, PartyFrozen
-from erpnext.utilities.regional import temporary_flag
+# from erpnext.utilities.regional import temporary_flag
 
 PURCHASE_TRANSACTION_TYPES = {"Purchase Order", "Purchase Receipt", "Purchase Invoice"}
 SALES_TRANSACTION_TYPES = {
@@ -262,9 +262,9 @@ def set_address_details(
 		shipping_address if party_type != "Supplier" else party_address,
 	)
 
-	if doctype in TRANSACTION_TYPES:
-		with temporary_flag("company", company):
-			get_regional_address_details(party_details, doctype, company)
+	# if doctype in TRANSACTION_TYPES:
+	# 	with temporary_flag("company", company):
+	# 		get_regional_address_details(party_details, doctype, company)
 
 	return party_address, shipping_address
 
