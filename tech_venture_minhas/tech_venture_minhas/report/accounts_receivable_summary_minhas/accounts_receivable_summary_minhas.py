@@ -100,7 +100,7 @@ class AccountsReceivableSummary(ReceivablePayableReport):
 
 			# Add all amount columns
 			for k in list(self.party_total[d.party]):
-				if k not in ["currency", "sales_person"]:
+				# if k not in ["currency", "sales_person"]:
 
 					self.party_total[d.party][k] += d.get(k, 0.0)
 
@@ -117,14 +117,14 @@ class AccountsReceivableSummary(ReceivablePayableReport):
 					"paid": 0.0,
 					"credit_note": 0.0,
 					"outstanding": 0.0,
-					"range1": 0.0,
-					"range2": 0.0,
-					"range3": 0.0,
-					"range4": 0.0,
-					"range5": 0.0,
-					"total_due": 0.0,
-					"future_amount": 0.0,
-					"sales_person": [],
+					# "range1": 0.0,
+					# "range2": 0.0,
+					# "range3": 0.0,
+					# "range4": 0.0,
+					# "range5": 0.0,
+					# "total_due": 0.0,
+					# "future_amount": 0.0,
+					# "sales_person": [],
 				}
 			),
 		)
@@ -167,37 +167,37 @@ class AccountsReceivableSummary(ReceivablePayableReport):
 
 		credit_debit_label = "Credit Note" if self.account_type == "Receivable" else "Debit Note"
 
-		self.add_column(_("Advance Amount"), fieldname="advance")
-		self.add_column(_("Invoiced Amount"), fieldname="invoiced")
-		self.add_column(_("Paid Amount"), fieldname="paid")
-		self.add_column(_(credit_debit_label), fieldname="credit_note")
+		# self.add_column(_("Advance Amount"), fieldname="advance")
+		# self.add_column(_("Invoiced Amount"), fieldname="invoiced")
+		# self.add_column(_("Paid Amount"), fieldname="paid")
+		# self.add_column(_(credit_debit_label), fieldname="credit_note")
 		self.add_column(_("Outstanding Amount"), fieldname="outstanding")
 
 		if self.filters.show_gl_balance:
 			self.add_column(_("GL Balance"), fieldname="gl_balance")
 			self.add_column(_("Difference"), fieldname="diff")
 
-		self.setup_ageing_columns()
+		# self.setup_ageing_columns()
 
-		if self.filters.show_future_payments:
-			self.add_column(label=_("Future Payment Amount"), fieldname="future_amount")
-			self.add_column(label=_("Remaining Balance"), fieldname="remaining_balance")
+		# if self.filters.show_future_payments:
+		# 	self.add_column(label=_("Future Payment Amount"), fieldname="future_amount")
+		# 	self.add_column(label=_("Remaining Balance"), fieldname="remaining_balance")
 
 		if self.account_type == "Receivable":
-			self.add_column(
-				label=_("Territory"), fieldname="territory", fieldtype="Link", options="Territory"
-			)
+			# self.add_column(
+			# 	label=_("Territory"), fieldname="territory", fieldtype="Link", options="Territory"
+			# )
 			self.add_column(
 				label=_("Customer Group"),
 				fieldname="customer_group",
 				fieldtype="Link",
 				options="Customer Group",
 			)
-			if self.filters.show_sales_person:
-				self.add_column(label=_("Sales Person"), fieldname="sales_person", fieldtype="Data")
-
-			if self.filters.sales_partner:
-				self.add_column(label=_("Sales Partner"), fieldname="default_sales_partner", fieldtype="Data")
+			# if self.filters.show_sales_person:
+			# 	self.add_column(label=_("Sales Person"), fieldname="sales_person", fieldtype="Data")
+			#
+			# if self.filters.sales_partner:
+			# 	self.add_column(label=_("Sales Partner"), fieldname="default_sales_partner", fieldtype="Data")
 
 		else:
 			self.add_column(
