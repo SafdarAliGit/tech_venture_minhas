@@ -21,7 +21,7 @@ def get_data():
             gle.party, 
             cust.customer_group, 
             gle.account_currency AS currency, 
-            gle.debit - gle.credit AS outstanding
+            SUM(gle.debit) - SUM(gle.credit) AS outstanding
         FROM 
             `tabGL Entry` gle
         JOIN
