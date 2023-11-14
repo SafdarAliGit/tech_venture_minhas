@@ -25,10 +25,18 @@ def get_columns():
             "width": 200
         },
         {
-            "label": _("Actual Qty"),
-            "fieldname": "actual_qty",
-            "fieldtype": "Data",
-            "width": 200
+            "label": _("In Qty"),
+            "fieldname": "in_qty",
+            "fieldtype": "Float",
+            "width": 80,
+            "convertible": "qty",
+        },
+        {
+            "label": _("Out Qty"),
+            "fieldname": "out_qty",
+            "fieldtype": "Float",
+            "width": 80,
+            "convertible": "qty",
         },
         {
             "label": _("Qty After Transaction"),
@@ -81,12 +89,11 @@ def get_data(filters):
     stock_query = """
             SELECT 
                 `tabItem`.variant_of,
-                SUM(`tabStock Ledger Entry`.actual_qty) AS actual_qty,
-                SUM(`tabStock Ledger Entry`.qty_after_transaction) AS qty_after_transaction
+                `tabStock Ledger Entry`.actual_qty,
+                `tabStock Ledger Entry`.qty_after_transaction
             FROM 
                 `tabItem`,`tabStock Ledger Entry`
             WHERE `tabItem`.item_code = `tabStock Ledger Entry`.item_code
-            GROUP BY `tabItem`.variant_of
             """
     # WHERE
     #      {conditions}
@@ -107,6 +114,8 @@ def get_data(filters):
     #     "no_of_bills": total_no_of_bills,
     #     "bill_amount": total_bill_amount
     # })
+    for item in stock_result:
+        item.update({"in_qty": max(item.actual_qty, 0), "out_qty": min(item.actual_qty, 0)})
     data.extend(stock_result)
     return data
 
