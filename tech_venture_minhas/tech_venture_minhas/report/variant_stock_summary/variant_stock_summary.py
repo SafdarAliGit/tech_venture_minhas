@@ -84,15 +84,13 @@ def get_data(filters):
     stock_query = """
             SELECT 
                 `tabItem`.variant_of,
-                SUM(`tabStock Ledger Entry`.actual_qty) AS actual_qty,
-                SUM(`tabStock Ledger Entry`.qty_after_transaction) AS qty_after_transaction
+                `tabStock Ledger Entry`.actual_qty
             FROM 
                 `tabItem`,`tabStock Ledger Entry`
             WHERE `tabItem`.item_code = `tabStock Ledger Entry`.item_code 
                 AND `tabStock Ledger Entry`.docstatus < 2 
                 AND `tabStock Ledger Entry`.is_cancelled = 0 
                 AND {conditions}
-            GROUP BY `tabItem`.variant_of
             """.format(conditions=get_conditions(filters, "Stock Ledger Entry"))
     # WHERE
     #      {conditions}
@@ -114,7 +112,7 @@ def get_data(filters):
     #     "bill_amount": total_bill_amount
     # })
     for item in stock_result:
-        item.update({"in_qty": max(item.actual_qty, 0), "out_qty": min(item.actual_qty, 0)})
+        item.update({"in_qty":item.actual_qty if item.actual_qty > 0 else 0, "out_qty":item.actual_qty if item.actual_qty < 0 else 0})
     data.extend(stock_result)
     return data
 

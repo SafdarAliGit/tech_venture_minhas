@@ -1,5 +1,5 @@
 {
- "add_total_row": 0,
+ "add_total_row": 1,
  "columns": [],
  "creation": "2023-11-14 18:04:32.129359",
  "disable_prepared_report": 0,
@@ -11,7 +11,7 @@
  "is_standard": "Yes",
  "json": "{}",
  "letter_head": "Minhas Electronics",
- "modified": "2023-11-14 18:04:32.129359",
+ "modified": "2023-11-14 21:51:42.742364",
  "modified_by": "Administrator",
  "module": "Tech Venture Minhas",
  "name": "Variant Stock Summary",
