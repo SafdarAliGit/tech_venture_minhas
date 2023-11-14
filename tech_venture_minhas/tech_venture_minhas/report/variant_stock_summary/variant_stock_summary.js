@@ -15,6 +15,12 @@ frappe.query_reports["Variant Stock Summary"] = {
 			"default": frappe.datetime.get_today(),
 			"reqd": 1
 		},
+		{
+			"fieldname":"variant_of",
+			"label": __("Template"),
+			"fieldtype": "Link",
+			"options": "Item",
+		},
     ]
 };
 
