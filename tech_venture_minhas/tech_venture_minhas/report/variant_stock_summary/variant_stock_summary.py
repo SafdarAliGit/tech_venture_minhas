@@ -113,7 +113,8 @@ def get_data(filters):
     #     "no_of_bills": total_no_of_bills,
     #     "bill_amount": total_bill_amount
     # })
-
+    for item in stock_result:
+        item.update({"in_qty": max(item.actual_qty, 0), "out_qty": min(item.actual_qty, 0)})
     data.extend(stock_result)
     return data
 
