@@ -1,5 +1,7 @@
 import frappe
 from frappe import _
+from itertools import groupby
+from operator import itemgetter
 
 
 def execute(filters=None):
@@ -39,8 +41,8 @@ def get_columns():
             "convertible": "qty",
         },
         {
-            "label": _("Qty After Transaction"),
-            "fieldname": "qty_after_transaction",
+            "label": _("Qty Balance"),
+            "fieldname": "qty_balance",
             "fieldtype": "Data",
             "width": 200
         }
@@ -112,8 +114,20 @@ def get_data(filters):
     #     "bill_amount": total_bill_amount
     # })
     for item in stock_result:
-        item.update({"in_qty":item.actual_qty if item.actual_qty > 0 else 0, "out_qty":item.actual_qty if item.actual_qty < 0 else 0})
-    data.extend(stock_result)
+        item["in_qty"] = max(item["actual_qty"], 0)
+        item["out_qty"] = min(item["actual_qty"], 0)
+
+    grouped_data = [
+        {
+            "variant_of": key,
+            "in_qty": sum(item["in_qty"] for item in group),
+            "out_qty": sum(item["out_qty"] for item in group),
+        }
+        for key, group in groupby(stock_result, key=itemgetter("variant_of"))
+    ]
+    for d in grouped_data:
+        d["qty_balance"] = d["in_qty"] - d["out_qty"]
+    data.extend(grouped_data)
     return data
 
 
