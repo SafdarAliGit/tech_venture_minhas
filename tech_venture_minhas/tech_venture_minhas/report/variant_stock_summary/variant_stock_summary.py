@@ -67,21 +67,14 @@ def get_columns():
     return columns
 
 
-# def get_conditions(filters, doctype):
-#     conditions = []
-#
-#     if filters.get("from_date"):
-#         conditions.append(f"`tab{doctype}`.posting_date >= %(from_date)s")
-#     if filters.get("to_date"):
-#         conditions.append(f"`tab{doctype}`.posting_date <= %(to_date)s")
-#     if filters.get("vessel_code"):
-#         conditions.append(f"`tab{doctype}`.vessel_code = %(vessel_code)s")
-#     if filters.get("customer_group"):
-#         conditions.append(f"`tab{doctype}`.customer_group = %(customer_group)s")
-#
-#     conditions.append(f"`tab{doctype}`.docstatus = 1")  # Include only submitted documents
-#
-#     return " AND ".join(conditions)
+def get_conditions(filters, doctype):
+    conditions = []
+
+    if filters.get("from_date"):
+        conditions.append(f"`tab{doctype}`.posting_date >= %(from_date)s")
+    if filters.get("to_date"):
+        conditions.append(f"`tab{doctype}`.posting_date <= %(to_date)s")
+    return " AND ".join(conditions)
 
 
 def get_data(filters):
@@ -93,8 +86,10 @@ def get_data(filters):
                 `tabStock Ledger Entry`.qty_after_transaction
             FROM 
                 `tabItem`,`tabStock Ledger Entry`
-            WHERE `tabItem`.item_code = `tabStock Ledger Entry`.item_code
-            """
+            WHERE `tabItem`.item_code = `tabStock Ledger Entry`.item_code AND
+                {conditions}
+            
+            """.format(conditions=get_conditions(filters, "Stock Ledger Entry"))
     # WHERE
     #      {conditions}
     # GROUP BY `tabSales Invoice`.customer_group, `tabSales Invoice`.customer
