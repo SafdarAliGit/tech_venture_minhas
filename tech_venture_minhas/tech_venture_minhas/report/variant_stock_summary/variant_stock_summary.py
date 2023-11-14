@@ -74,6 +74,8 @@ def get_conditions(filters, doctype):
         conditions.append(f"`tab{doctype}`.posting_date >= %(from_date)s")
     if filters.get("to_date"):
         conditions.append(f"`tab{doctype}`.posting_date <= %(to_date)s")
+    if filters.get("variant_of"):
+        conditions.append(f"`tabItem`.variant_of = %(variant_of)s")
     return " AND ".join(conditions)
 
 
@@ -82,13 +84,15 @@ def get_data(filters):
     stock_query = """
             SELECT 
                 `tabItem`.variant_of,
-                `tabStock Ledger Entry`.actual_qty,
-                `tabStock Ledger Entry`.qty_after_transaction
+                SUM(`tabStock Ledger Entry`.actual_qty) AS actual_qty,
+                SUM(`tabStock Ledger Entry`.qty_after_transaction) AS qty_after_transaction
             FROM 
                 `tabItem`,`tabStock Ledger Entry`
-            WHERE `tabItem`.item_code = `tabStock Ledger Entry`.item_code AND
-                {conditions}
-            
+            WHERE `tabItem`.item_code = `tabStock Ledger Entry`.item_code 
+                AND `tabStock Ledger Entry`.docstatus < 2 
+                AND `tabStock Ledger Entry`.is_cancelled = 0 
+                AND {conditions}
+            GROUP BY `tabItem`.variant_of
             """.format(conditions=get_conditions(filters, "Stock Ledger Entry"))
     # WHERE
     #      {conditions}
@@ -96,7 +100,7 @@ def get_data(filters):
     # .format(conditions=get_conditions(filters, "Sales Invoice"))
 
     # si_result = frappe.db.sql(si_query, filters, as_dict=1)
-    stock_result = frappe.db.sql(stock_query, as_dict=1)
+    stock_result = frappe.db.sql(stock_query,filters, as_dict=1)
     # total_no_of_bills = 0
     # total_bill_amount = 0
     # total_customer_name = len(si_result)
