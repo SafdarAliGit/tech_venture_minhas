@@ -23,7 +23,7 @@ def decimal_format(value, decimals):
 def get_columns():
     columns = [
         {
-            "label": _("Item Teplate"),
+            "label": _("Item Template"),
             "fieldname": "variant_of",
             "fieldtype": "Data",
             "width": 200
