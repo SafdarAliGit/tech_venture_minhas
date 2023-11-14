@@ -114,8 +114,7 @@ def get_data(filters):
     #     "bill_amount": total_bill_amount
     # })
     for item in stock_result:
-        item["in_qty"] = max(item["actual_qty"], 0)
-        item["out_qty"] = min(item["actual_qty"], 0)
+        item.update({"in_qty":item.actual_qty if item.actual_qty > 0 else 0, "out_qty":item.actual_qty if item.actual_qty < 0 else 0})
 
     grouped_data = [
         {
