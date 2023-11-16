@@ -120,7 +120,7 @@ def get_data(filters):
                     `tabItem`.variant_of,
                     `tabStock Ledger Entry`.item_code,
                     `tabStock Ledger Entry`.qty_after_transaction,
-                    ROW_NUMBER() OVER (PARTITION BY `tabItem`.variant_of ORDER BY `tabStock Ledger Entry`.posting_date) AS row_num
+                    ROW_NUMBER() OVER (PARTITION BY `tabItem`.variant_of ORDER BY `tabStock Ledger Entry`.posting_date DESC) AS row_num
                 FROM
                     `tabItem`, `tabStock Ledger Entry`
                 WHERE
