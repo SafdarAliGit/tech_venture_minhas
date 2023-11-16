@@ -92,8 +92,8 @@ def get_conditions(filters, doctype):
 
 def get_other_conditions(filters, doctype):
     conditions = []
-    if filters.get("from_date"):
-        conditions.append(f"`tab{doctype}`.posting_date < %(from_date)s")
+    if filters.get("to_date"):
+        conditions.append(f"`tab{doctype}`.posting_date > %(to_date)s")
     if filters.get("variant_of"):
         conditions.append(f"`tabItem`.variant_of = %(variant_of)s")
     return " AND ".join(conditions)
@@ -127,9 +127,6 @@ def get_data(filters):
                     AND {conditions}
                 GROUP BY
                     `tabItem`.variant_of
-                ORDER BY
-                    `tabStock Ledger Entry`.posting_date
-                LIMIT 1;    
             """.format(conditions=get_other_conditions(filters, "Stock Ledger Entry"))
     other_stock_result = frappe.db.sql(other_stock_query, filters, as_dict=1)
 
