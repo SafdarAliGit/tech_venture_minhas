@@ -93,7 +93,7 @@ def get_conditions(filters, doctype):
 def get_other_conditions(filters, doctype):
     conditions = []
     if filters.get("to_date"):
-        conditions.append(f"`tab{doctype}`.posting_date < %(to_date)s")
+        conditions.append(f"`tab{doctype}`.posting_date > %(to_date)s")
     if filters.get("variant_of"):
         conditions.append(f"`tabItem`.variant_of = %(variant_of)s")
     return " AND ".join(conditions)
@@ -120,7 +120,7 @@ def get_data(filters):
                     `tabItem`.variant_of,
                     `tabStock Ledger Entry`.item_code,
                     `tabStock Ledger Entry`.qty_after_transaction,
-                    ROW_NUMBER() OVER (PARTITION BY `tabItem`.variant_of ORDER BY `tabStock Ledger Entry`.posting_date DESC) AS row_num
+                    ROW_NUMBER() OVER (PARTITION BY `tabItem`.variant_of ORDER BY `tabStock Ledger Entry`.posting_date) AS row_num
                 FROM
                     `tabItem`, `tabStock Ledger Entry`
                 WHERE
