@@ -108,17 +108,17 @@ def get_data(filters):
                 WITH RankedStockLedger AS (
                 SELECT
                     `tabItem`.variant_of,
-                    `tabStock Ledger Entry`.item_code,
                     `tabStock Ledger Entry`.qty_after_transaction,
                     ROW_NUMBER() OVER (PARTITION BY `tabItem`.variant_of ORDER BY `tabStock Ledger Entry`.posting_date DESC) AS row_num
                 FROM
                     `tabItem`, `tabStock Ledger Entry`
                 WHERE
                     `tabItem`.item_code = `tabStock Ledger Entry`.item_code 
+                    AND `tabStock Ledger Entry`.docstatus < 2 
+                    AND `tabStock Ledger Entry`.is_cancelled = 0 
             )
             SELECT
                 variant_of,
-                item_code,
                 qty_after_transaction
             FROM
                 RankedStockLedger
