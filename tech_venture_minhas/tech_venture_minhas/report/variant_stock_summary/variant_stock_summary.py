@@ -93,7 +93,7 @@ def get_conditions(filters, doctype):
 def get_other_conditions(filters, doctype):
     conditions = []
     if filters.get("to_date"):
-        conditions.append(f"`tab{doctype}`.posting_date > %(to_date)s")
+        conditions.append(f"`tab{doctype}`.posting_date < %(to_date)s")
     if filters.get("variant_of"):
         conditions.append(f"`tabItem`.variant_of = %(variant_of)s")
     return " AND ".join(conditions)
@@ -115,19 +115,28 @@ def get_data(filters):
     stock_result = frappe.db.sql(stock_query, filters, as_dict=1)
 
     other_stock_query = """
-                SELECT 
+                WITH RankedStockLedger AS (
+                SELECT
                     `tabItem`.variant_of,
-                    SUM(`tabStock Ledger Entry`.qty_after_transaction) AS qty_after_transaction,
-                    MAX(`tabStock Ledger Entry`.posting_date) AS posting_date
-                FROM 
+                    `tabStock Ledger Entry`.item_code,
+                    `tabStock Ledger Entry`.qty_after_transaction,
+                    ROW_NUMBER() OVER (PARTITION BY `tabItem`.variant_of ORDER BY `tabStock Ledger Entry`.posting_date DESC) AS row_num
+                FROM
                     `tabItem`, `tabStock Ledger Entry`
-                WHERE 
+                WHERE
                     `tabItem`.item_code = `tabStock Ledger Entry`.item_code 
                     AND `tabStock Ledger Entry`.docstatus < 2 
                     AND `tabStock Ledger Entry`.is_cancelled = 0 
                     AND {conditions}
-                GROUP BY
-                    `tabItem`.variant_of
+            )
+            SELECT
+                variant_of,
+                item_code,
+                qty_after_transaction
+            FROM
+                RankedStockLedger
+            WHERE
+                row_num = 1;
             """.format(conditions=get_other_conditions(filters, "Stock Ledger Entry"))
     other_stock_result = frappe.db.sql(other_stock_query, filters, as_dict=1)
 
