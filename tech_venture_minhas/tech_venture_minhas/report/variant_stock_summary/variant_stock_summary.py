@@ -92,8 +92,6 @@ def get_conditions(filters, doctype):
 
 def get_other_conditions(filters, doctype):
     conditions = []
-    if filters.get("to_date"):
-        conditions.append(f"`tab{doctype}`.posting_date < %(to_date)s")
     if filters.get("variant_of"):
         conditions.append(f"`tabItem`.variant_of = %(variant_of)s")
     return " AND ".join(conditions)
