@@ -109,15 +109,12 @@ def get_data(filters):
                 SELECT
                     `tabItem`.variant_of,
                     `tabStock Ledger Entry`.item_code,
-                    SUM(`tabStock Ledger Entry`.qty_after_transaction) AS qty_after_transaction,
+                    `tabStock Ledger Entry`.qty_after_transaction,
                     ROW_NUMBER() OVER (PARTITION BY `tabItem`.variant_of ORDER BY `tabStock Ledger Entry`.posting_date DESC) AS row_num
                 FROM
                     `tabItem`, `tabStock Ledger Entry`
                 WHERE
                     `tabItem`.item_code = `tabStock Ledger Entry`.item_code 
-                    AND `tabStock Ledger Entry`.docstatus < 2 
-                    AND `tabStock Ledger Entry`.is_cancelled = 0 
-                GROUP BY `tabItem`.variant_of, `tabStock Ledger Entry`.item_code
             )
             SELECT
                 variant_of,
