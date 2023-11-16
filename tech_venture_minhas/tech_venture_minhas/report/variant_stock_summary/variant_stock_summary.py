@@ -117,7 +117,8 @@ def get_data(filters):
     other_stock_query = """
                 SELECT 
                     `tabItem`.variant_of,
-                    SUM(`tabStock Ledger Entry`.qty_after_transaction) AS qty_after_transaction
+                    SUM(`tabStock Ledger Entry`.qty_after_transaction) AS qty_after_transaction,
+                    MAX(`tabStock Ledger Entry`.posting_date) AS posting_date
                 FROM 
                     `tabItem`, `tabStock Ledger Entry`
                 WHERE 
