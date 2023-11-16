@@ -115,18 +115,20 @@ def get_data(filters):
     stock_result = frappe.db.sql(stock_query, filters, as_dict=1)
 
     other_stock_query = """
-                SELECT 
-                    `tabItem`.variant_of,
-                    SUM(`tabStock Ledger Entry`.qty_after_transaction) AS qty_after_transaction
-                FROM 
-                    `tabItem`,`tabStock Ledger Entry`
-                WHERE `tabItem`.item_code = `tabStock Ledger Entry`.item_code 
-                    AND `tabStock Ledger Entry`.docstatus < 2 
-                    AND `tabStock Ledger Entry`.is_cancelled = 0 
-                    AND {conditions}
-                GROUP BY
-                    `tabItem`.variant_of
-                """.format(conditions=get_other_conditions(filters, "Stock Ledger Entry"))
+            SELECT 
+                `tabItem`.variant_of,
+                MAX(`tabStock Ledger Entry`.posting_date) AS last_transaction_date,
+                SUM(`tabStock Ledger Entry`.qty_after_transaction) AS qty_after_transaction
+            FROM 
+                `tabItem`, `tabStock Ledger Entry`
+            WHERE 
+                `tabItem`.item_code = `tabStock Ledger Entry`.item_code 
+                AND `tabStock Ledger Entry`.docstatus < 2 
+                AND `tabStock Ledger Entry`.is_cancelled = 0 
+                AND {conditions}
+            GROUP BY
+                `tabItem`.variant_of
+            """.format(conditions=get_other_conditions(filters, "Stock Ledger Entry"))
     other_stock_result = frappe.db.sql(other_stock_query, filters, as_dict=1)
 
     for item in stock_result:
