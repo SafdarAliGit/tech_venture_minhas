@@ -29,6 +29,13 @@ def get_columns():
             "width": 200
         },
         {
+            "label": _("Opening Stock"),
+            "fieldname": "qty_after_transaction",
+            "fieldtype": "Float",
+            "width": 80,
+            "convertible": "qty",
+        },
+        {
             "label": _("In Qty"),
             "fieldname": "in_qty",
             "fieldtype": "Float",
@@ -83,6 +90,15 @@ def get_conditions(filters, doctype):
     return " AND ".join(conditions)
 
 
+def get_other_conditions(filters, doctype):
+    conditions = []
+    if filters.get("to_date"):
+        conditions.append(f"`tab{doctype}`.posting_date > %(to_date)s")
+    if filters.get("variant_of"):
+        conditions.append(f"`tabItem`.variant_of = %(variant_of)s")
+    return " AND ".join(conditions)
+
+
 def get_data(filters):
     data = []
     stock_query = """
@@ -96,25 +112,23 @@ def get_data(filters):
                 AND `tabStock Ledger Entry`.is_cancelled = 0 
                 AND {conditions}
             """.format(conditions=get_conditions(filters, "Stock Ledger Entry"))
-    # WHERE
-    #      {conditions}
-    # GROUP BY `tabSales Invoice`.customer_group, `tabSales Invoice`.customer
-    # .format(conditions=get_conditions(filters, "Sales Invoice"))
+    stock_result = frappe.db.sql(stock_query, filters, as_dict=1)
 
-    # si_result = frappe.db.sql(si_query, filters, as_dict=1)
-    stock_result = frappe.db.sql(stock_query,filters, as_dict=1)
-    # total_no_of_bills = 0
-    # total_bill_amount = 0
-    # total_customer_name = len(si_result)
-    # for row in si_result:
-    #     total_no_of_bills += row["no_of_bills"]
-    #     total_bill_amount += row["bill_amount"]
-    # si_result.append({
-    #     "customer_group": _("Total"),
-    #     "customer_name": f"Total parties :  {total_customer_name}",
-    #     "no_of_bills": total_no_of_bills,
-    #     "bill_amount": total_bill_amount
-    # })
+    other_stock_query = """
+                SELECT 
+                    `tabItem`.variant_of,
+                    SUM(`tabStock Ledger Entry`.qty_after_transaction) AS qty_after_transaction
+                FROM 
+                    `tabItem`,`tabStock Ledger Entry`
+                WHERE `tabItem`.item_code = `tabStock Ledger Entry`.item_code 
+                    AND `tabStock Ledger Entry`.docstatus < 2 
+                    AND `tabStock Ledger Entry`.is_cancelled = 0 
+                    AND {conditions}
+                GROUP BY
+                    `tabItem`.variant_of
+                """.format(conditions=get_other_conditions(filters, "Stock Ledger Entry"))
+    other_stock_result = frappe.db.sql(other_stock_query, filters, as_dict=1)
+
     for item in stock_result:
         item["in_qty"] = max(item["actual_qty"], 0)
         item["out_qty"] = min(item["actual_qty"], 0)
@@ -130,10 +144,12 @@ def get_data(filters):
 
     for d in grouped_data_list:
         d["qty_balance"] = d["in_qty"] + d["out_qty"]
+        # OTHER CALCULATIONS HERE
+    for item in grouped_data_list:
+        matching_item = next((x for x in other_stock_result if x['variant_of'] == item['variant_of']), None)
+        if matching_item:
+            item.update({'qty_after_transaction': matching_item['qty_after_transaction']})
+        # OTHER CLACULATIONS END
+
     data.extend(grouped_data_list)
     return data
-
-
-
-
-
