@@ -89,14 +89,6 @@ def get_conditions(filters, doctype):
         conditions.append(f"`tabItem`.variant_of = %(variant_of)s")
     return " AND ".join(conditions)
 
-
-def get_other_conditions(filters, doctype):
-    conditions = []
-    if filters.get("variant_of"):
-        conditions.append(f"`tabItem`.variant_of = %(variant_of)s")
-    return " AND ".join(conditions)
-
-
 def get_data(filters):
     data = []
     stock_query = """
@@ -125,7 +117,6 @@ def get_data(filters):
                     `tabItem`.item_code = `tabStock Ledger Entry`.item_code 
                     AND `tabStock Ledger Entry`.docstatus < 2 
                     AND `tabStock Ledger Entry`.is_cancelled = 0 
-                    AND {conditions}
             )
             SELECT
                 variant_of,
@@ -135,7 +126,7 @@ def get_data(filters):
                 RankedStockLedger
             WHERE
                 row_num = 1;
-            """.format(conditions=get_other_conditions(filters, "Stock Ledger Entry"))
+            """
     other_stock_result = frappe.db.sql(other_stock_query, filters, as_dict=1)
 
     for item in stock_result:
