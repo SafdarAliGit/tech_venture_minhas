@@ -89,6 +89,16 @@ def get_conditions(filters, doctype):
         conditions.append(f"`tabItem`.variant_of = %(variant_of)s")
     return " AND ".join(conditions)
 
+
+def get_other_conditions(filters, doctype):
+    conditions = []
+    if filters.get("from_date"):
+        conditions.append(f"`tab{doctype}`.posting_date < %(from_date)s")
+    if filters.get("variant_of"):
+        conditions.append(f"`tabItem`.variant_of = %(variant_of)s")
+    return " AND ".join(conditions)
+
+
 def get_data(filters):
     data = []
     stock_query = """
@@ -108,23 +118,24 @@ def get_data(filters):
                 WITH RankedStockLedger AS (
                 SELECT
                     `tabItem`.variant_of,
-                    `tabStock Ledger Entry`.qty_after_transaction,
-                    ROW_NUMBER() OVER (PARTITION BY `tabItem`.variant_of ORDER BY `tabStock Ledger Entry`.posting_date ASC) AS row_num
+                    `tabStock Ledger Entry`.actual_qty,
+                    ROW_NUMBER() OVER (PARTITION BY `tabItem`.variant_of) AS row_num
                 FROM
                     `tabItem`, `tabStock Ledger Entry`
                 WHERE
                     `tabItem`.item_code = `tabStock Ledger Entry`.item_code 
                     AND `tabStock Ledger Entry`.docstatus < 2 
                     AND `tabStock Ledger Entry`.is_cancelled = 0 
-            )
-            SELECT
-                variant_of,
-                qty_after_transaction
-            FROM
-                RankedStockLedger
-            WHERE
-                row_num = 1;
-            """
+                    AND {conditions}
+                    )
+                SELECT
+                    variant_of,
+                    SUM(actual_qty) AS qty_after_transaction
+                FROM
+                    RankedStockLedger
+                GROUP BY
+                    variant_of
+            """.format(conditions=get_other_conditions(filters, "Stock Ledger Entry"))
     other_stock_result = frappe.db.sql(other_stock_query, filters, as_dict=1)
 
     for item in stock_result:
