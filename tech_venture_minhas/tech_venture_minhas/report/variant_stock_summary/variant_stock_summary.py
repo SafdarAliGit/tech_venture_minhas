@@ -157,7 +157,7 @@ def get_data(filters):
     for item in grouped_data_list:
         matching_item = next((x for x in other_stock_result if x['variant_of'] == item['variant_of']), None)
         if matching_item:
-            item.update({'qty_after_transaction': matching_item['qty_after_transaction']})
+            item.update({'qty_after_transaction': matching_item['qty_after_transaction'], 'qty_balance': item['qty_balance'] + matching_item['qty_after_transaction']})
         # OTHER CLACULATIONS END
 
     data.extend(grouped_data_list)
